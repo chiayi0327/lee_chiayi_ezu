@@ -11,9 +11,11 @@
         {% csrf_token %}
         <p>
             Are you sure that you want to delete
-            Student {{ student }}?
+            student {{ student }}?
         </p>
-        <a href="{{ student.get_absolute_url }}">Cancel</a>
-        <button type="submit">Delete Student</button>
+        <a href="{{ student.get_absolute_url }}"
+            class="button button-primary">
+            Cancel</a>
+        <button type="submit" class="button button-primary">Delete Student</button>
     </form>
 {% endblock %}
