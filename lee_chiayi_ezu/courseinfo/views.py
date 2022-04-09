@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView, CreateView
 
 from courseinfo.forms import InstructorForm, SectionForm, CourseForm, SemesterForm, StudentForm, RegistrationForm
 from courseinfo.models import (
@@ -12,7 +12,7 @@ from courseinfo.models import (
 	Student,
 	Registration,
 )
-from courseinfo.utils import ObjectCreateMixin, PageLinksMixin
+from courseinfo.utils import PageLinksMixin
 
 
 class InstructorList(PageLinksMixin, ListView):
@@ -20,24 +20,20 @@ class InstructorList(PageLinksMixin, ListView):
 	model = Instructor
 
 
-class InstructorDetail(View):
+class InstructorDetail(DetailView):
+	model = Instructor
 
-	def get(self, request, pk):
-		instructor = get_object_or_404(
-			Instructor,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		instructor = self.get_object()
 		section_list = instructor.sections.all()
-		return render(
-			request,
-			'courseinfo/instructor_detail.html',
-			{'instructor': instructor, 'section_list': section_list}
-		)
+		context['section_list'] = section_list
+		return context
 
 
-class InstructorCreate(ObjectCreateMixin, View):
+class InstructorCreate(CreateView):
 	form_class = InstructorForm
-	template_name = 'courseinfo/instructor_form.html'
+	model = Instructor
 
 
 class InstructorUpdate(View):
@@ -113,31 +109,26 @@ class SectionList(ListView):
 	model = Section
 
 
-class SectionDetail(View):
+class SectionDetail(DetailView):
+	model = Section
 
-	def get(self, request, pk):
-		section = get_object_or_404(
-			Section,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		section = self.get_object()
 		semester = section.semester
 		course = section.course
 		instructor = section.instructor
 		registration_list = section.registrations.all()
-		return render(
-			request,
-			'courseinfo/section_detail.html',
-			{'section': section,
-			 'semester': semester,
-			 'course': course,
-			 'instructor': instructor,
-			 'registration_list': registration_list}
-		)
+		context['semester'] = semester
+		context['course'] = course
+		context['instructor'] = instructor
+		context['registration_list'] = registration_list
+		return context
 
 
-class SectionCreate(ObjectCreateMixin, View):
+class SectionCreate(CreateView):
 	form_class = SectionForm
-	template_name = 'courseinfo/section_form.html'
+	model = Section
 
 
 class SectionUpdate(View):
@@ -213,24 +204,20 @@ class CourseList(ListView):
 	model = Course
 
 
-class CourseDetail(View):
+class CourseDetail(DetailView):
+	model = Course
 
-	def get(self, request, pk):
-		course = get_object_or_404(
-			Course,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		course = self.get_object()
 		section_list = course.sections.all()
-		return render(
-			request,
-			'courseinfo/course_detail.html',
-			{'course': course, 'section_list': section_list}
-		)
+		context['section_list'] = section_list
+		return context
 
 
-class CourseCreate(ObjectCreateMixin, View):
+class CourseCreate(CreateView):
 	form_class = CourseForm
-	template_name = 'courseinfo/course_form.html'
+	model = Course
 
 
 class CourseUpdate(View):
@@ -306,24 +293,20 @@ class SemesterList(ListView):
 	model = Semester
 
 
-class SemesterDetail(View):
+class SemesterDetail(DetailView):
+	model = Semester
 
-	def get(self, request, pk):
-		semester = get_object_or_404(
-			Semester,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		semester = self.get_object()
 		section_list = semester.sections.all()
-		return render(
-			request,
-			'courseinfo/semester_detail.html',
-			{'semester': semester, 'section_list': section_list}
-		)
+		context['section_list'] = section_list
+		return context
 
 
-class SemesterCreate(ObjectCreateMixin, View):
+class SemesterCreate(CreateView):
 	form_class = SemesterForm
-	template_name = 'courseinfo/semester_form.html'
+	model = Semester
 
 
 class SemesterUpdate(View):
@@ -400,25 +383,20 @@ class StudentList(PageLinksMixin, ListView):
 	model = Student
 
 
-class StudentDetail(View):
+class StudentDetail(DetailView):
+	model = Student
 
-	def get(self, request, pk):
-		student = get_object_or_404(
-			Student,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		student = self.get_object()
 		registration_list = student.registrations.all()
-		return render(
-			request,
-			'courseinfo/student_detail.html',
-			{'student': student,
-			 'registration_list': registration_list}
-		)
+		context['registration_list'] = registration_list
+		return context
 
 
-class StudentCreate(ObjectCreateMixin, View):
+class StudentCreate(CreateView):
 	form_class = StudentForm
-	template_name = 'courseinfo/student_form.html'
+	model = Student
 
 
 class StudentUpdate(View):
@@ -494,27 +472,22 @@ class RegistrationList(ListView):
 	model = Registration
 
 
-class RegistrationDetail(View):
+class RegistrationDetail(DetailView):
+	model = Registration
 
-	def get(self, request, pk):
-		registration = get_object_or_404(
-			Registration,
-			pk=pk
-		)
+	def get_context_data(self, **kwargs):
+		context = super(DetailView, self).get_context_data(**kwargs)
+		registration = self.get_object()
 		student = registration.student
 		section = registration.section
-		return render(
-			request,
-			'courseinfo/registration_detail.html',
-			{'registration': registration,
-			 'student': student,
-			 'section': section}
-		)
+		context['student'] = student
+		context['section'] = section
+		return context
 
 
-class RegistrationCreate(ObjectCreateMixin, View):
+class RegistrationCreate(CreateView):
 	form_class = RegistrationForm
-	template_name = 'courseinfo/registration_form.html'
+	model = Registration
 
 
 class RegistrationUpdate(View):
