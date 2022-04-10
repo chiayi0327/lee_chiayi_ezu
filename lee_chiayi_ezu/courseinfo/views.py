@@ -98,10 +98,12 @@ class SectionUpdate(UpdateView):
 	template_name = 'courseinfo/section_form_update.html'
 
 
-class SectionDelete(View):
+class SectionDelete(DeleteView):
+	model = Section
+	success_url = reverse_lazy('courseinfo_section_list_urlpattern')
 
 	def get(self, request, pk):
-		section = self.get_object(pk)
+		section = get_object_or_404(Section, pk=pk)
 		registrations = section.registrations.all()
 		if registrations.count() > 0:
 			return render(
@@ -117,16 +119,6 @@ class SectionDelete(View):
 				'courseinfo/section_confirm_delete.html',
 				{'section': section}
 			)
-
-	def get_object(self, pk):
-		return get_object_or_404(
-			Section,
-			pk=pk)
-
-	def post(self, request, pk):
-		section = self.get_object(pk)
-		section.delete()
-		return redirect('courseinfo_section_list_urlpattern')
 
 
 class CourseList(ListView):
@@ -155,10 +147,12 @@ class CourseUpdate(UpdateView):
 	template_name = 'courseinfo/course_form_update.html'
 
 
-class CourseDelete(View):
+class CourseDelete(DeleteView):
+	model = Course
+	success_url = reverse_lazy('courseinfo_course_list_urlpattern')
 
 	def get(self, request, pk):
-		course = self.get_object(pk)
+		course = get_object_or_404(Course, pk=pk)
 		sections = course.sections.all()
 		if sections.count() > 0:
 			return render(
@@ -174,16 +168,6 @@ class CourseDelete(View):
 				'courseinfo/course_confirm_delete.html',
 				{'course': course}
 			)
-
-	def get_object(self, pk):
-		return get_object_or_404(
-			Course,
-			pk=pk)
-
-	def post(self, request, pk):
-		course = self.get_object(pk)
-		course.delete()
-		return redirect('courseinfo_course_list_urlpattern')
 
 
 class SemesterList(ListView):
@@ -212,10 +196,12 @@ class SemesterUpdate(UpdateView):
 	template_name = 'courseinfo/semester_form_update.html'
 
 
-class SemesterDelete(View):
+class SemesterDelete(DeleteView):
+	model = Semester
+	success_url = reverse_lazy('courseinfo_semester_list_urlpattern')
 
 	def get(self, request, pk):
-		semester = self.get_object(pk)
+		semester = get_object_or_404(Semester, pk=pk)
 		sections = semester.sections.all()
 		if sections.count() > 0:
 			return render(
@@ -231,16 +217,6 @@ class SemesterDelete(View):
 				'courseinfo/semester_confirm_delete.html',
 				{'semester': semester}
 			)
-
-	def get_object(self, pk):
-		return get_object_or_404(
-			Semester,
-			pk=pk)
-
-	def post(self, request, pk):
-		semester = self.get_object(pk)
-		semester.delete()
-		return redirect('courseinfo_semester_list_urlpattern')
 
 
 class StudentList(PageLinksMixin, ListView):
@@ -270,10 +246,12 @@ class StudentUpdate(UpdateView):
 	template_name = 'courseinfo/student_form_update.html'
 
 
-class StudentDelete(View):
+class StudentDelete(DeleteView):
+	model = Student
+	success_url = reverse_lazy('courseinfo_student_list_urlpattern')
 
 	def get(self, request, pk):
-		student = self.get_object(pk)
+		student = get_object_or_404(Student, pk=pk)
 		registrations = student.registrations.all()
 		if registrations.count() > 0:
 			return render(
@@ -289,16 +267,6 @@ class StudentDelete(View):
 				'courseinfo/student_confirm_delete.html',
 				{'student': student}
 			)
-
-	def get_object(self, pk):
-		return get_object_or_404(
-			Student,
-			pk=pk)
-
-	def post(self, request, pk):
-		student = self.get_object(pk)
-		student.delete()
-		return redirect('courseinfo_student_list_urlpattern')
 
 
 class RegistrationList(ListView):
